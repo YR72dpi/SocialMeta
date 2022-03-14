@@ -20,14 +20,6 @@ class SocialMeta {
         "twitter_img" => null
     ];
 
-    /**
-     * can check if the values is correct in function "checkList"
-     */
-    private function check(){
-        
-    }
-
-
     // ___ FUNCTION ___
 
     private function remote_file_exists($url) {
@@ -44,21 +36,21 @@ class SocialMeta {
     private function fileFind($url) {
         if (preg_match("/^https?:\/\/.*(\..*)/i", $url)) {
             if ($this->remote_file_exists($url)) {
-                $this->SocialImages['google_img'] = $url;
                 return $url;
             }else {
                 return false;
             }
         } else {
-            $path = $this->fileParam["img_folder_parent"].$this->fileParam["img_param"]["default_img"]."/socialMeta_img/".$url;
+            $path = $this->fileParam["img_folder_parent"]."socialMeta_img/".$url;
+            
             if (file_exists($path)) {
-                $this->SocialImages['google_img'] = $path;
                 return $path;
             }else {
                 return false;
             }
         }
     }
+
 
     /* ------------------------------------------------ *\
             Public
@@ -94,18 +86,25 @@ class SocialMeta {
         $ifp_given = ($ifp == "false") ? throw new Exception("You have to set the images folder parent on line 10", 1) : true;
         
         if ($ifp_given && file_exists($ifp)) {
-            if (!file_exists($ifp."/socialMeta_img")) {
-                mkdir($ifp."/socialMeta_img");
+            if (!file_exists($ifp."socialMeta_img")) {
+                mkdir($ifp."socialMeta_img");
             }
         } else {
             throw new Exception($ifp." doesn't exists", 1);  
         }
 
+        // init attributs
         $this->commonParam = [
             "url" => $url,
             "title" => $title,
             "description" => $description
         ];
+
+        // check if there is a default image
+        if (!file_exists($this->fileParam["img_folder_parent"]."socialMeta_img/".$this->fileParam["img_param"]["default_img"])) {
+            throw new Exception("Default image required", 1);
+            
+        }
 
     }
 
@@ -136,7 +135,7 @@ class SocialMeta {
     public function setTwitterImg (string $url){
         $file = $this->fileFind($url);
         if ($file) {
-            $this->SocialImages["twitter_twitter"] = $file;
+            $this->SocialImages["twitter_img"] = $file;
             return true;
         } else {
             throw new Exception("No file find", 1);
@@ -159,13 +158,18 @@ class SocialMeta {
      * Getter
      */
 
-    public function getCheckList(){
-    }
-
     public function print() {
         $url = $this->commonParam['url'];
         $title = $this->commonParam['title'];
         $description = $this->commonParam['description'];
+
+        $img = $this->SocialImages;
+        foreach ($img as $key => $value) {
+            //var_dump($key." => ".$value);
+            if(is_null($img[$key])) {
+                $this->SocialImages[$key] = $this->fileParam["img_folder_parent"]."socialMeta_img/".$this->fileParam["img_param"]["default_img"];
+            }
+        }
 
 
         $print = "<!-- Google+ -->";
@@ -192,7 +196,7 @@ class SocialMeta {
 
         $print .= "<meta name='twitter:card'         content='summary_large_image'>";
         
-        echo htmlspecialchars($print);
+        echo $print;
     }
     
 }
