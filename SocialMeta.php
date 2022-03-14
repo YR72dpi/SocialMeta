@@ -20,6 +20,11 @@ class SocialMeta {
         "twitter_img" => null
     ];
 
+    private $othersParams = [
+        "og_type" => "website",
+        "twitter_card" => "summary_large_image"
+    ];
+
     // ___ FUNCTION ___
 
     private function remote_file_exists($url) {
@@ -154,6 +159,14 @@ class SocialMeta {
         }
     }
 
+    public function setOgType (string $type){
+        return !empty($type) ? $this->othersParams["og_type"] = $type : false ;
+    }
+
+    public function setTwitterCard (string $card){
+        return !empty($card) ? $this->othersParams["twitter_card"] = $card : false ;
+    }
+
     /**
      * Getter
      */
@@ -163,6 +176,11 @@ class SocialMeta {
         $title = $this->commonParam['title'];
         $description = $this->commonParam['description'];
 
+        /** 
+         * define default value
+         */
+
+        // Social images
         $img = $this->SocialImages;
         foreach ($img as $key => $value) {
             //var_dump($key." => ".$value);
@@ -172,29 +190,29 @@ class SocialMeta {
         }
 
 
-        $print = "<!-- Google+ -->";
-	    $print .= "<meta itemprop='name'             content='".$title."'>";
-	    $print .= "<meta itemprop='description'      content='".$description."'>";
+        $print = "\t"."<!-- Google+ -->"."\n";
+	    $print .= "\t"."<meta itemprop='name'             content='".$title."'>"."\n";
+	    $print .= "\t"."<meta itemprop='description'      content='".$description."'>"."\n";
 	    
-        $print .= "<meta itemprop='image'            content='".$this->SocialImages["google_img"]."'>";
+        $print .= "\t"."<meta itemprop='image'            content='".$this->SocialImages["google_img"]."'>"."\n";
 
-	    $print .= "<!-- Facebook -->";
-        $print .= "<meta property='og:title'         content='".$title."' />";
-	    $print .= "<meta property='og:url'           content='".$url."' />";
-        $print .= "<meta property='og:description'   content='".$description."' />";
+	    $print .= "\t"."<!-- Facebook -->"."\n";
+        $print .= "\t"."<meta property='og:title'         content='".$title."' />"."\n";
+	    $print .= "\t"."<meta property='og:url'           content='".$url."' />"."\n";
+        $print .= "\t"."<meta property='og:description'   content='".$description."' />"."\n";
 
-        $print .= "<meta property='og:image'         content='".$this->SocialImages["og_img"]."'>";
+        $print .= "\t"."<meta property='og:image'         content='".$this->SocialImages["og_img"]."'>"."\n";
 
-        $print .= "<meta property='og:type'          content='website' />";
+        $print .= "\t"."<meta property='og:type'          content='".$this->othersParams["og_type"]."' />"."\n";
 
-        $print .= "<!-- Twitter -->";
-        $print .= "<meta name='twitter:title'        content='".$title."'>";
-        $print .= "<meta name='twitter:url'          content='".$url."' />";
-        $print .= "<meta name='twitter:description'  content='".$description."'>";
+        $print .= "\t"."<!-- Twitter -->"."\n";
+        $print .= "\t"."<meta name='twitter:title'        content='".$title."'>"."\n";
+        $print .= "\t"."<meta name='twitter:url'          content='".$url."' />"."\n";
+        $print .= "\t"."<meta name='twitter:description'  content='".$description."'>"."\n";
 
-        $print .= "<meta name='twitter:image'        content='".$this->SocialImages["twitter_img"]."'>";
+        $print .= "\t"."<meta name='twitter:image'        content='".$this->SocialImages["twitter_img"]."'>"."\n";
 
-        $print .= "<meta name='twitter:card'         content='summary_large_image'>";
+        $print .= "\t"."<meta name='twitter:card'         content='".$this->othersParams["twitter_card"]."'>"."\n";
         
         echo $print;
     }
