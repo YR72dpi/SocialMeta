@@ -8,6 +8,9 @@ class SocialMeta {
 
     private $fileParam;
 
+    const PARAM_FILE = "socialMeta_param.json";
+    const IMG_FOLDER = "/socialMeta_img/";
+
     private $commonParam = [
             "url" => null,
             "title" => null,
@@ -46,7 +49,7 @@ class SocialMeta {
                 return false;
             }
         } else {
-            $path = $this->fileParam["img_folder_parent"]."socialMeta_img/".$url;
+            $path = $this->fileParam["img_folder_parent"].self::IMG_FOLDER.$url;
             
             if (file_exists($path)) {
                 return $path;
@@ -78,29 +81,39 @@ class SocialMeta {
             ]
         ];
 
-        if (!file_exists("socialMeta_param.json")) {
-            file_put_contents("socialMeta_param.json", json_encode($fileParam));
+        if (!file_exists(self::PARAM_FILE)) {
+            file_put_contents(self::PARAM_FILE, json_encode($fileParam));
         }
     }
 
     public function __construct(string $url, string $title, string $description) {
         
-        if(file_exists("socialMeta.json")) {
-            $this->fileParam = json_decode(file_get_contents("socialMeta_param.json"), 1);
+        if(file_exists("SocialMeta_param.json")) {
+            $this->fileParam = json_decode(file_get_contents(self::PARAM_FILE), 1);
         } else {
             throw new Exception("You have to install the json file with SocialMeta::install() and edit the json file", 1);
         }   
         
-        // Verify if the images folder parent exists
+        // Verify if the images folder parent is set
         $ifp = $this->fileParam["img_folder_parent"];
-        $ifp_given = (empty($ifp)) ? throw new Exception("You have to set the images folder parent on line 10", 1) : true;
+        $ifp_given = (empty($ifp)) ? throw new Exception("You have to set the images folder parent", 1) : true;
         
+        // Verify if the images folder parent exists
         if ($ifp_given && file_exists($ifp)) {
-            if (!file_exists($ifp."socialMeta_img")) {
-                mkdir($ifp."socialMeta_img");
+            if (!file_exists($ifp.self::IMG_FOLDER)) {
+                mkdir($ifp.self::IMG_FOLDER, true);
             }
         } else {
             throw new Exception($ifp." doesn't exists", 1);  
+        }
+
+        // check if default image is set
+        $default_img = $this->fileParam["img_param"]["default_img"];
+        $default_img_given = (empty($default_img)) ? throw new Exception("You have to set the default image", 1) : true;
+        
+        // check if default image exists
+        if (!file_exists($this->fileParam["img_folder_parent"].self::IMG_FOLDER.$this->fileParam["img_param"]["default_img"])) {
+            throw new Exception("Default image not find", 1); 
         }
 
         // init attributs
@@ -109,12 +122,6 @@ class SocialMeta {
             "title" => $title,
             "description" => $description
         ];
-
-        // check if there is a default image
-        if (!file_exists($this->fileParam["img_folder_parent"]."socialMeta_img/".$this->fileParam["img_param"]["default_img"])) {
-            throw new Exception("Default image required", 1);
-            
-        }
 
     }
 
@@ -190,7 +197,7 @@ class SocialMeta {
         foreach ($img as $key => $value) {
             //var_dump($key." => ".$value);
             if(is_null($img[$key])) {
-                $this->SocialImages[$key] = $this->fileParam["img_folder_parent"]."socialMeta_img/".$this->fileParam["img_param"]["default_img"];
+                $this->SocialImages[$key] = $this->fileParam["img_folder_parent"].self::IMG_FOLDER.$this->fileParam["img_param"]["default_img"];
             }
         }
 
