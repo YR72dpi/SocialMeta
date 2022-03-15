@@ -75,10 +75,7 @@ class SocialMeta {
         
         $fileParam = [
             "img_folder_parent" => "",
-            "img_param" => [
-                "img_format_ignore" => false,
-                "default_img" => ""
-            ]
+            "default_img" => ""
         ];
 
         if (!file_exists(self::PARAM_FILE)) {
@@ -118,11 +115,11 @@ class SocialMeta {
         }
 
         // check if default image is set
-        $default_img = $this->fileParam["img_param"]["default_img"];
+        $default_img = $this->fileParam["default_img"];
         $default_img_given = (empty($default_img)) ? throw new Exception("You have to set the default image", 1) : true;
         
         // check if default image exists
-        if (!file_exists($this->fileParam["img_folder_parent"].self::IMG_FOLDER.$this->fileParam["img_param"]["default_img"])) {
+        if (!file_exists($this->fileParam["img_folder_parent"].self::IMG_FOLDER.$this->fileParam["default_img"])) {
             throw new Exception("Default image not find", 1); 
         }
 
@@ -207,7 +204,7 @@ class SocialMeta {
         foreach ($img as $key => $value) {
             //var_dump($key." => ".$value);
             if(is_null($img[$key])) {
-                $this->SocialImages[$key] = $this->fileParam["img_folder_parent"].self::IMG_FOLDER.$this->fileParam["img_param"]["default_img"];
+                $this->SocialImages[$key] = $this->fileParam["img_folder_parent"].self::IMG_FOLDER.$this->fileParam["default_img"];
             }
         }
 
