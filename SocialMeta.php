@@ -82,7 +82,17 @@ class SocialMeta {
         ];
 
         if (!file_exists(self::PARAM_FILE)) {
-            file_put_contents(self::PARAM_FILE, json_encode($fileParam));
+            try {
+                file_put_contents(self::PARAM_FILE, json_encode($fileParam));
+                
+                echo "\n";
+                echo "\t File created successuly "."\n";
+                echo "\t Name : ".self::PARAM_FILE."\n";
+                echo "\t Folder : ".__DIR__."\n";
+
+            } catch (\Throwable $th) {
+                throw $th;
+            }
         }
     }
 
