@@ -71,7 +71,7 @@ class SocialMeta {
     public static function install(){
         
         $fileParam = [
-            "img_folder_parent" => "false",
+            "img_folder_parent" => "",
             "img_param" => [
                 "img_format_ignore" => false,
                 "default_img" => ""
@@ -84,11 +84,16 @@ class SocialMeta {
     }
 
     public function __construct(string $url, string $title, string $description) {
-        $this->fileParam = json_decode(file_get_contents("socialMeta_param.json"), 1);
+        
+        if(file_exists("socialMeta.json")) {
+            $this->fileParam = json_decode(file_get_contents("socialMeta_param.json"), 1);
+        } else {
+            throw new Exception("You have to install the json file with SocialMeta::install() and edit the json file", 1);
+        }   
         
         // Verify if the images folder parent exists
         $ifp = $this->fileParam["img_folder_parent"];
-        $ifp_given = ($ifp == "false") ? throw new Exception("You have to set the images folder parent on line 10", 1) : true;
+        $ifp_given = (empty($ifp)) ? throw new Exception("You have to set the images folder parent on line 10", 1) : true;
         
         if ($ifp_given && file_exists($ifp)) {
             if (!file_exists($ifp."socialMeta_img")) {
