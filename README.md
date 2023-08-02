@@ -1,4 +1,4 @@
-*thank chatGPT for documentation*
+*thanks to chatGPT for documentation*
 # SocialMeta Class Documentation
 
 ## Description
